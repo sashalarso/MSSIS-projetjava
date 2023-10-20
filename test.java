@@ -1,34 +1,34 @@
-package calc;
-import calc.ObjEmp;
-import calc.PileRPL;
-
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import calc.ObjEmp;
+import calc.PileRPL;
 
-
-
-public class CalcUI {
-    private PileRPL pile;
-    private PrintWriter writer;
-    private boolean recordMode;
-
-    public CalcUI(String logFileName, boolean recordMode) {
-        pile = new PileRPL(5);
-        this.recordMode = recordMode;
-
-        if (recordMode) {
-            try {
-                writer = new PrintWriter(logFileName, "UTF-8");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        run();
-    }
-
-    public void run() {
+public class FooCalcRPL {
+    public static void main(String[] args) throws IOException {
+        PileRPL pile = new PileRPL(5);
         Scanner scanner = new Scanner(System.in);
+        PrintWriter writer = null;
+        boolean recordMode = false;
+        String logFileName = "log.txt";
+
+        if (args.length > 0 && args[0].equals("replay")) {
+            Scanner fileScanner = new Scanner(new File(logFileName));
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                System.out.println(line);
+            }
+            fileScanner.close();
+            System.exit(0);
+        }
+
+        if (args.length > 0 && args[0].equals("record")) {
+            new PrintWriter(logFileName).close();
+            writer = new PrintWriter(new FileWriter("log.txt", true), true);
+            recordMode = true;
+        }
 
         while (true) {
             System.out.println("Entrez une commande : complexe, add, print, quit ");
@@ -65,13 +65,3 @@ public class CalcUI {
         }
     }
 }
-
-   
-
-    
-
-
-
-        
-
-
