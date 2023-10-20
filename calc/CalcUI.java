@@ -13,11 +13,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Scanner;
 import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 public class CalcUI {
     private PileRPL pile;
     private boolean loop=true;
+    private boolean logbool=false;
     String[] args;
 
     private BufferedReader inputuser;
@@ -39,21 +43,23 @@ public class CalcUI {
             if (input.equals("quit")){
                 loop=false;
             }
-            if ( args.length > 1 && args[1].equals("log")){
+            
+            if ( logbool){
                 outputlog.println(input);
             }
             cmdParser(input, pile);
         }
     }
 
-    public void initStreams(String[] args) throws FileNotFoundException{
+    public void initStreams(String[] args) throws UnknownHostException, IOException{
         if (args.length > 0) {
-            switch (args[0]) {
+            for (int i = 0; i < args.length; i++){
+            switch (args[i]) {
                 case "replay":
-                    
+
                     break;
                 case "remote":
-                   
+                    initFullRemote();
                     break;
                 case "local":
                     initFullLocal(); 
@@ -64,11 +70,15 @@ public class CalcUI {
                 case "remotenotshared":
                     
                     break;
+                case "log":
+                    logrecording();
+                    break;
                 default:
                     initFullLocal();
                     break;
             }
         }
+    }
     }
     public void cmdParser(String cmd,PileRPL pile){
         String[] tokens = cmd.split(" ");
@@ -84,7 +94,7 @@ public class CalcUI {
         } else if (tokens[0].equals("quit")) {
             System.out.println("Au revoir!");
             
-            System.exit(0);
+            
             
         } else if (tokens[0].equals("print")) {
             System.out.println("Contenu de la pile :");
@@ -98,23 +108,35 @@ public class CalcUI {
         inputuser = new BufferedReader(new InputStreamReader(System.in));
         //outputlog = new BufferedReader(new FileReader("log.txt"));
         outputuser = System.out;
-        if (args.length > 1 && args[1].equals("log")) {
-            
-            try {
-                outputlog = new PrintStream(new FileOutputStream("log.txt"));
-                
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    public void initFullRemote(){
         
+    }
+    public void initFullRemote() throws UnknownHostException, IOException{
+        
+        int serverPort = 2222; 
+
+  
+        ServerSocket socket = new ServerSocket( serverPort);
+        Socket client=socket.accept();
+        
+
+        inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        outputuser=new PrintStream(client.getOutputStream());
+        
+         
     }
     public void initReplayLocal(){
 
     }
     public void initReplayNetwork(){
+
+    }
+
+    public void logrecording() throws FileNotFoundException{
+        this.logbool=true;
+        this.outputlog = new PrintStream(new FileOutputStream("log.txt"));
+    }
+
+    public void replay(){
 
     }
 }
