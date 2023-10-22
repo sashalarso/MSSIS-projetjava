@@ -38,7 +38,7 @@ public class CalcUI {
     public void run() throws IOException {
         
         while (loop) {
-            System.out.println("Entrez une commande : complexe (partie réelle, partie imaginaire), add, print, quit ");
+            outputuser.println("Entrez une commande : complexe (partie réelle, partie imaginaire), add, print, quit ");
             String input = inputuser.readLine();
             if (input.equals("quit")){
                 loop=false;
@@ -55,8 +55,11 @@ public class CalcUI {
         if (args.length > 0) {
             for (int i = 0; i < args.length; i++){
             switch (args[i]) {
-                case "replay":
-
+                case "replaylocal":
+                    initReplayLocal();
+                    break;
+                case "replayremote":
+                    initReplayNetwork();
                     break;
                 case "remote":
                     initFullRemote();
@@ -90,17 +93,17 @@ public class CalcUI {
             pile.push(objEmp);
         } else if (tokens[0].equals("add")) {
             pile.add();
-            System.out.println("Addition effectuée.");
+            outputuser.println("Addition effectuée.");
         } else if (tokens[0].equals("quit")) {
-            System.out.println("Au revoir!");
+            outputuser.println("Au revoir!");
             
             
             
         } else if (tokens[0].equals("print")) {
-            System.out.println("Contenu de la pile :");
-            System.out.println(pile);
+            outputuser.println("Contenu de la pile :");
+            outputuser.println(pile);
         } else {
-            System.out.println("Commande non reconnue");
+            outputuser.println("Commande non reconnue");
         }
     }
 
@@ -124,11 +127,20 @@ public class CalcUI {
         
          
     }
-    public void initReplayLocal(){
-
+    public void initReplayLocal() throws IOException{
+        File file=new File("log.txt");
+        outputuser=System.out;
+        inputuser=new BufferedReader(new FileReader(file));
     }
-    public void initReplayNetwork(){
+    public void initReplayNetwork() throws IOException{
+        int serverPort = 2222; 
 
+  
+        ServerSocket socket = new ServerSocket( serverPort);
+        Socket client=socket.accept();
+        File file=new File("log.txt");
+        outputuser=new PrintStream(client.getOutputStream());
+        inputuser=new BufferedReader(new FileReader(file));
     }
 
     public void logrecording() throws FileNotFoundException{
