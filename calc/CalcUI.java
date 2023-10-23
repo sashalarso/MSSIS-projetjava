@@ -86,12 +86,20 @@ public class CalcUI {
     public void cmdParser(String cmd,PileRPL pile){
         String[] tokens = cmd.split(" ");
 
-        if (tokens.length >= 2) {
+        if (tokens.length == 3) {
+            int x = Integer.parseInt(tokens[0]);
+            int y = Integer.parseInt(tokens[1]);
+            int z = Integer.parseInt(tokens[2]);
+            ObjEmp vecteur = new Vecteur3D(x,y,z);
+            pile.push(vecteur);}
+        
+        else if (tokens.length == 2) {
             int real = Integer.parseInt(tokens[0]);
             int complex = Integer.parseInt(tokens[1]);
-            ObjEmp objEmp = new ObjEmp(real, complex);
+            ObjEmp objEmp = new Complexe(real, complex);
             pile.push(objEmp);
         } else if (tokens[0].equals("add")) {
+            
             pile.add();
             outputuser.println("Addition effectuée.");
         } else if (tokens[0].equals("quit")) {
@@ -102,7 +110,14 @@ public class CalcUI {
         } else if (tokens[0].equals("print")) {
             outputuser.println("Contenu de la pile :");
             outputuser.println(pile);
-        } else {
+        } 
+        else if(tokens.length==1 && isNumeric(tokens[0])   ){
+            
+            int value=Integer.parseInt(tokens[0]);
+            ObjEmp nombre=new Nombre(value);
+            pile.push(nombre);
+        }
+        else {
             outputuser.println("Commande non reconnue");
         }
     }
@@ -134,8 +149,7 @@ public class CalcUI {
     }
     public void initReplayNetwork() throws IOException{
         int serverPort = 2222; 
-
-  
+         
         ServerSocket socket = new ServerSocket( serverPort);
         Socket client=socket.accept();
         File file=new File("log.txt");
@@ -150,6 +164,17 @@ public class CalcUI {
 
     public void replay(){
 
+    }
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int d = Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 }
 

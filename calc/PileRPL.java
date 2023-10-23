@@ -60,8 +60,8 @@ public class PileRPL{
         else{
             ObjEmp obj1 = this.pop();
             ObjEmp obj2 = this.pop();
-        
-            newObjEmp=new ObjEmp(obj1.getReal()+obj2.getReal(),obj1.getComplex()+obj2.getComplex());
+            
+            newObjEmp=obj1.add(obj2);
        
             this.push(newObjEmp);  
         }
@@ -72,7 +72,7 @@ public class PileRPL{
         String line ="";
         for (int i=0;i<this.tab.length;i=i+1){
             if (i<this.nbObj){
-                line+=i+" | " + tab[i].getReal() + " + " + tab[i].getComplex() + "i" + " |  \n";
+                line+=i+" | " + tab[i].toString()+ " |  \n";
             }
             else {
                 line+=i+" | "  + "         |  \n";
