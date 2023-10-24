@@ -20,7 +20,7 @@ import java.net.UnknownHostException;
 
 public class CalcUI {
     private PileRPL pile;
-    private boolean loop=true;
+    
     private boolean logbool=false;
     String[] args;
 
@@ -32,10 +32,12 @@ public class CalcUI {
         pile = new PileRPL(5);
         this.args=args;
         initStreams(args);
-        run();
+        run(outputuser,inputuser,pile);
+        
     }
 
-    public void run() throws IOException {
+    public void run(PrintStream outputuser,BufferedReader inputuser,PileRPL pile) throws IOException {
+        boolean loop=true;
         
         while (loop) {
             outputuser.println("Entrez une commande : nombre (valeur), vecteur 3d (x,y,z),complexe (partie réelle, partie imaginaire), add, sub, div, mul, print, quit ");
@@ -47,7 +49,7 @@ public class CalcUI {
             if ( logbool){
                 outputlog.println(input);
             }
-            cmdParser(input, pile);
+            cmdParser(input, pile,outputuser);
         }
     }
 
@@ -68,10 +70,10 @@ public class CalcUI {
                     initFullLocal(); 
                     break;
                 case "remoteshared":
-                   
+                   initFullRemoteShared();
                     break;
                 case "remotenotshared":
-                    
+                    initFullRemoteNotShared();
                     break;
                 case "log":
                     logrecording();
@@ -83,7 +85,7 @@ public class CalcUI {
         }
     }
     }
-    public void cmdParser(String cmd,PileRPL pile){
+    public void cmdParser(String cmd,PileRPL pile,PrintStream outputuser){
         String[] tokens = cmd.split(" ");
 
         if (tokens.length == 3) {
@@ -147,16 +149,38 @@ public class CalcUI {
     public void initFullRemote() throws UnknownHostException, IOException{
         
         int serverPort = 2222; 
+         
+        ServerSocket socket = new ServerSocket( serverPort);
+        Socket client=socket.accept();
+        inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        outputuser = new PrintStream(client.getOutputStream());
+    }
+
+    public void initFullRemoteShared() throws UnknownHostException, IOException{
+        
+        int serverPort = 2222; 
 
   
         ServerSocket socket = new ServerSocket( serverPort);
-        Socket client=socket.accept();
+        while (true){
+            Socket client=socket.accept();
         
+            Thread clientThread = new Thread(() -> handleRemoteConnection(client));
+            clientThread.start();
+        }             
+    }
+    public void initFullRemoteNotShared() throws UnknownHostException, IOException{
+        
+        int serverPort = 2222; 
 
-        inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        outputuser=new PrintStream(client.getOutputStream());
+  
+        ServerSocket socket = new ServerSocket( serverPort);
+        while (true){
+            Socket client=socket.accept();
         
-         
+            Thread clientThread = new Thread(() -> handleRemoteConnectionNotShared(client));
+            clientThread.start();
+        }             
     }
     public void initReplayLocal() throws IOException{
         File file=new File("log.txt");
@@ -191,6 +215,33 @@ public class CalcUI {
             return false;
         }
         return true;
+    }
+    public void handleRemoteConnection(Socket client) {
+        try {
+            inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            outputuser = new PrintStream(client.getOutputStream());
+            
+            run(outputuser,inputuser,pile);
+            client.close();
+            
+           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void handleRemoteConnectionNotShared(Socket client) {
+        PileRPL pile=new PileRPL(5);
+        try {
+            inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            outputuser = new PrintStream(client.getOutputStream());
+            
+            run(outputuser,inputuser,pile);
+            client.close();
+            
+           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
