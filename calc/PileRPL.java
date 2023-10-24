@@ -68,6 +68,56 @@ public class PileRPL{
               
         
     }
+    public void sub(){
+        ObjEmp newObjEmp;
+        if (this.nbObj<2){
+            System.out.println("Not enough objects");
+        }
+        else{
+            ObjEmp obj1 = this.pop();
+            ObjEmp obj2 = this.pop();
+            
+            newObjEmp=obj1.sub(obj2);
+       
+            this.push(newObjEmp);  
+        }
+              
+        
+    }
+    public void mul(){
+        ObjEmp newObjEmp;
+        
+        if (this.nbObj<2){
+            System.out.println("Not enough objects");
+        }
+        else{
+            
+            ObjEmp obj1 = this.pop();
+            ObjEmp obj2 = this.pop();
+            
+            newObjEmp=obj1.mul(obj2);
+       
+            this.push(newObjEmp);  
+        }
+              
+        
+    }
+    public void div(){
+        ObjEmp newObjEmp;
+        if (this.nbObj<2){
+            System.out.println("Not enough objects");
+        }
+        else{
+            ObjEmp obj1 = this.pop();
+            ObjEmp obj2 = this.pop();
+            
+            newObjEmp=obj1.div(obj2);
+       
+            this.push(newObjEmp);  
+        }
+              
+        
+    }
     public String toString(){
         String line ="";
         for (int i=0;i<this.tab.length;i=i+1){

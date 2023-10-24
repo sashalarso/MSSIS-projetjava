@@ -38,7 +38,7 @@ public class CalcUI {
     public void run() throws IOException {
         
         while (loop) {
-            outputuser.println("Entrez une commande : complexe (partie réelle, partie imaginaire), add, print, quit ");
+            outputuser.println("Entrez une commande : nombre (valeur), vecteur 3d (x,y,z),complexe (partie réelle, partie imaginaire), add, sub, div, mul, print, quit ");
             String input = inputuser.readLine();
             if (input.equals("quit")){
                 loop=false;
@@ -102,7 +102,23 @@ public class CalcUI {
             
             pile.add();
             outputuser.println("Addition effectuée.");
-        } else if (tokens[0].equals("quit")) {
+        }
+        else if (tokens[0].equals("sub")) {
+            
+            pile.sub();
+            outputuser.println("Soustraction effectuée.");
+        }
+        else if (tokens[0].equals("mul")) {
+            
+            pile.mul();
+            outputuser.println("Multiplication effectuée.");
+        }
+        else if (tokens[0].equals("div")) {
+            
+            pile.div();
+            outputuser.println("Division effectuée.");
+        }
+        else if (tokens[0].equals("quit")) {
             outputuser.println("Au revoir!");
             
             
