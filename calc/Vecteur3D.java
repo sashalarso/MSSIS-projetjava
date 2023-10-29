@@ -1,7 +1,5 @@
 package calc;
 
-import java.util.Arrays;
-
 public class Vecteur3D implements ObjEmp{
     public int x;
     public int y;

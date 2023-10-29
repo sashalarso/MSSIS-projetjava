@@ -3,15 +3,12 @@ import calc.ObjEmp;
 import calc.PileRPL;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Scanner;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,6 +19,7 @@ public class CalcUI {
     private PileRPL pile;
     
     private boolean logbool=false;
+    private boolean replaybool=false;
     String[] args;
 
     private BufferedReader inputuser;
@@ -42,11 +40,14 @@ public class CalcUI {
         while (loop) {
             outputuser.println("Entrez une commande : nombre (valeur), vecteur 3d (x,y,z),complexe (partie réelle, partie imaginaire), add, sub, div, mul, print, quit ");
             String input = inputuser.readLine();
+            
             if (input.equals("quit")){
                 loop=false;
             }
-            
-            if ( logbool){
+            if(replaybool){
+                outputuser.println(input);
+            }
+            if ( logbool ){
                 outputlog.println(input);
             }
             cmdParser(input, pile,outputuser);
@@ -54,6 +55,7 @@ public class CalcUI {
     }
 
     public void initStreams(String[] args) throws UnknownHostException, IOException{
+        
         if (args.length > 0) {
             for (int i = 0; i < args.length; i++){
             switch (args[i]) {
@@ -83,7 +85,11 @@ public class CalcUI {
                     break;
             }
         }
+        
     }
+        else{
+            initFullLocal();
+        }
     }
     public void cmdParser(String cmd,PileRPL pile,PrintStream outputuser){
         String[] tokens = cmd.split(" ");
@@ -140,9 +146,9 @@ public class CalcUI {
         }
     }
 
-    public void initFullLocal() throws FileNotFoundException{
+    public void initFullLocal(){
         inputuser = new BufferedReader(new InputStreamReader(System.in));
-        //outputlog = new BufferedReader(new FileReader("log.txt"));
+        
         outputuser = System.out;
         
     }
@@ -154,6 +160,7 @@ public class CalcUI {
         Socket client=socket.accept();
         inputuser = new BufferedReader(new InputStreamReader(client.getInputStream()));
         outputuser = new PrintStream(client.getOutputStream());
+        socket.close();
     }
 
     public void initFullRemoteShared() throws UnknownHostException, IOException{
@@ -180,14 +187,19 @@ public class CalcUI {
         
             Thread clientThread = new Thread(() -> handleRemoteConnectionNotShared(client));
             clientThread.start();
-        }             
+        }
+                    
     }
     public void initReplayLocal() throws IOException{
+        replaybool=true;
+
         File file=new File("log.txt");
         outputuser=System.out;
         inputuser=new BufferedReader(new FileReader(file));
     }
     public void initReplayNetwork() throws IOException{
+        replaybool=true;
+
         int serverPort = 2222; 
          
         ServerSocket socket = new ServerSocket( serverPort);
@@ -202,9 +214,6 @@ public class CalcUI {
         this.outputlog = new PrintStream(new FileOutputStream("log.txt"));
     }
 
-    public void replay(){
-
-    }
     public static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
@@ -245,9 +254,7 @@ public class CalcUI {
     }
 }
 
-   //3 flux
-   //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+  
 
     
 
