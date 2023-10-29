@@ -51,6 +51,7 @@ public class Complexe implements ObjEmp {
         try {
             switch (oe.getClass().getName()) {
                 case "calc.Complexe" -> {
+                    
                     int tmpReal = this.real * ((Complexe) oe).real;
                     int tmpImag = this.real * ((Complexe) oe).complex; 
                     this.real = tmpReal - this.complex * ((Complexe) oe).complex;
