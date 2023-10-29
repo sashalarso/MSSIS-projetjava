@@ -25,9 +25,18 @@ public class CalcUI {
     private BufferedReader inputuser;
     private PrintStream outputlog;
     private PrintStream outputuser;
+    int default_size=5;
 
     public CalcUI(String[] args) throws IOException {
-        pile = new PileRPL(5);
+        if (args.length > 0) {
+            for (int i = 0; i < args.length; i++) {
+                if (isNumeric(args[i])) {
+                    default_size=Integer.parseInt(args[i]);
+                    
+                }
+            }
+        }
+        pile = new PileRPL(default_size);
         this.args=args;
         initStreams(args);
         run(outputuser,inputuser,pile);
@@ -80,6 +89,7 @@ public class CalcUI {
                 case "log":
                     logrecording();
                     break;
+                
                 default:
                     initFullLocal();
                     break;
@@ -252,6 +262,7 @@ public class CalcUI {
             e.printStackTrace();
         }
     }
+    
 }
 
   
