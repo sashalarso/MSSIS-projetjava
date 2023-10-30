@@ -1,11 +1,5 @@
-1
-1
-1
-1
-1
-add
-add
-add
+1 1
+1 1
 add
 print
 quit
